@@ -34,7 +34,7 @@ class Add extends Component {
         this.handleChange = this.handleChange.bind(this);
         this.handleMapChange = this.handleMapChange.bind(this);
         this.handleTagsChange = this.handleTagsChange.bind(this);
-        this.handleSecondSubmit = this.handleSecondSubmit.bind(this);
+        this.handleSecondSubmit = this.handleSecondSubmit.bind(this); this.handleRequestClose = this.handleRequestClose.bind(this);
     };
 
     componentWillMount() {
@@ -83,7 +83,8 @@ class Add extends Component {
     }
 
     handleSecondSubmit() {
-        const { activeRegions, activeTags,} = this.state
+        const { activeRegions, activeTags, } = this.state
+        let toggle = true
         for (const tag in activeTags) {
             if (activeTags[tag]) {
                 for (const region in activeRegions) {
@@ -92,19 +93,32 @@ class Add extends Component {
                         if (stepIndex < 2) {
                             this.setState({ stepIndex: stepIndex + 1 });
                         }
-                    }
+                        toggle = false
+                    } 
                 }
-            }
+            } 
+        }
+        if (toggle) {
+            this.setState({
+                open: true,
+                errorText: "Please select at leest one tag and one region"
+            })
         }
     }
 
-    showSnackBar(){
+    handleRequestClose() {
+        this.setState({
+            open: false
+        })
+    }
+
+    showSnackBar() {
         this.setState({
             errorText: "Please select at least 1 tag",
             open: true,
         })
         this.setState({
-            errorText:"Please select at least 1 region",
+            errorText: "Please select at least 1 region",
             open: true,
         })
     }
@@ -116,7 +130,7 @@ class Add extends Component {
         }
         return (
             <div>
-           </div>
+            </div>
         );
     }
 
@@ -211,12 +225,6 @@ class Add extends Component {
                             <div className="add-map">
                                 <Map handle={this.handleMapChange} activeRegions={this.state.activeRegions} />
                             </div>
-                            <Snackbar
-                    open={this.state.open}
-                    message={this.state.errorText}
-                    autoHideDuration={4000}
-                    onRequestClose={this.handleRequestClose}
-                /> 
                             <div>
                                 <TagsCheckBoxes handle={this.handleTagsChange} tags={tags} activeTags={this.state.activeTags} />
                             </div>
@@ -233,6 +241,15 @@ class Add extends Component {
                                     type="submit"
                                 />
                             </div>
+                            <div>
+                                <Snackbar
+                                    open={this.state.open}
+                                    message={this.state.errorText}
+                                    autoHideDuration={4000}
+                                    onRequestClose={this.handleRequestClose}
+                                />
+                            </div>
+
                         </div>
                     </ValidatorForm>
                 );
@@ -268,7 +285,7 @@ class Add extends Component {
                     </Step>
                 </Stepper>
                 {this.getStepContent(stepIndex)}
-   
+
 
             </div>
         )
