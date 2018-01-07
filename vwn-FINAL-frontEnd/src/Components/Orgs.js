@@ -13,12 +13,12 @@ class Orgs extends Component {
       orgsAfterFilter: {},
       noFilter: true,
     }
-    this.filterOrgsbyId = this.filterOrgsbyId.bind(this)
+    // this.filterOrgsbyId = this.filterOrgsbyId.bind(this)
   }
 
   componentWillMount() {
     this.setState({
-      orgs: this.props.orgs
+      orgs: this.props.orgs,
     })
     console.log("will mount", new Date())
     Observable.subscribe('Observable', this.activeOrgs)
@@ -26,47 +26,100 @@ class Orgs extends Component {
 
   componentDidMount() {
     console.log("did mount", new Date());
-
     Observable.updateState('Observable', 'activeTags', Observable.getHash('t'))
+    Observable.updateState('Observable', 'activeRegions', Observable.getHash('r'))
   }
 
   componentWillUnmount() {
-    console.log("2nd will mount", new Date());
-
     Observable.unSubscribe('Observable', this.activeOrgs)
   }
 
   activeOrgs = (data) => {
-    console.log("get active orgs", new Date());
-    this.setState({
-      orgsAfterFilter: this.filterOrgsbyId(data)
-    })
+    const {orgs} = this.state
+    console.log(data.activeRegions, data.activeTags ,  "active regions")
+    if (data.activeTags === undefined ||  data.activeRegions=== undefined) {return}
+    let filterdOrgsByRegion = this.filterOrgsbyId(orgs,'regions', data.activeRegions)
+    let filterdOrgsByTag = this.filterOrgsbyId(orgs,'tags', data.activeTags)
+    console.log(Object.keys(filterdOrgsByRegion).length, Object.keys(filterdOrgsByTag).length, "render")
+    console.log(this.state.orgsAfterFilter)
+    if (Object.keys(filterdOrgsByRegion).length === 0) {
+      this.setState({
+        orgsAfterFilter: filterdOrgsByTag
+      })
+    } if (Object.keys(filterdOrgsByTag).length === 0)   {
+      console.log('2nd if else',this.filterOrgsbyId(filterdOrgsByTag ,'tags', data.activeTags))
+
+      this.setState({
+        orgsAfterFilter: filterdOrgsByRegion
+      })
+    }
+
+    else {
+      console.log('last else',this.filterOrgsbyId(filterdOrgsByTag ,'tags', data.activeTags))
+      this.setState({
+        orgsAfterFilter: this.filterOrgsbyId(filterdOrgsByTag , 'tags', data.activeTags)
+      })
+    }
   }
 
-  filterOrgsbyId = (data) => {
-    console.log("filter function", new Date())
-    let { orgs } = this.state
-    let filteredOrgs = {}
-    for (const orgID in orgs) {
-      let filteredOrg = {}
-      let org = orgs[orgID]
-      const arrayOfTags = org["tags"]
-      console.log(arrayOfTags, "where")
-      arrayOfTags.forEach(tagID => {
-        if (data.activeTags[tagID]) {
-          if (filteredOrg.name === undefined) {
-            filteredOrg = Object.assign({}, org)
-            filteredOrg.id = orgID
+  filterOrgsbyId = (orgs, filters, activeFilters) => {
+    let newFilteredOrgs = {}
+    for (const orgId in orgs) {
+      let newFilteredOrg = {}
+      let org = orgs[orgId]
+      org[`${filters}`].forEach(filterId => {
+        if (activeFilters[filterId]) {
+          if (newFilteredOrg.name === undefined) {
+            newFilteredOrg = Object.assign({}, org)
+            newFilteredOrg.id = orgId
           }
         }
       })
-      if (filteredOrg.name !== undefined) {
-        filteredOrgs[orgID] = Object.assign({}, filteredOrg)
+      if (newFilteredOrg.name !== undefined) {
+        newFilteredOrgs[orgId] = Object.assign({}, newFilteredOrg)
       }
     }
-
-    return filteredOrgs
+    return newFilteredOrgs
   }
+
+
+
+
+
+
+
+  // activeOrgs = (data) => {
+  //   console.log("get active orgs", new Date());
+  //   this.setState({
+  //     orgsAfterFilter: this.filterOrgsbyId(data)
+  //   })
+  // }
+
+  // filterOrgsbyId = (data) => {
+  //   console.log("filter function", new Date())
+  //   let { orgs } = this.state
+  //   let filteredOrgs = {}
+  //   for (const orgID in orgs) {
+  //     let filteredOrg = {}
+  //     let org = orgs[orgID]
+  //     const arrayOfTags = org["tags"]
+  //     console.log(arrayOfTags, "where")
+  //     arrayOfTags.forEach(tagID => {
+  //       if (data.activeTags[tagID]) {
+  //         if (filteredOrg.name === undefined) {
+  //           filteredOrg = Object.assign({}, org)
+  //           filteredOrg.id = orgID
+  //         }
+  //       }
+  //     })
+  //     if (filteredOrg.name !== undefined) {
+  //       filteredOrgs[orgID] = Object.assign({}, filteredOrg)
+  //     }
+  //   }
+
+  //   return filteredOrgs
+  // }
+  
 
 
   renderOrgs(orgs) {
@@ -115,6 +168,8 @@ class Orgs extends Component {
   }
 
   render() {
+    console.log(this.state.orgsAfterFilter)
+
     const { orgs, orgsAfterFilter } = this.state
     if (Object.keys(orgsAfterFilter).length === 0) {
       return (<div>{this.renderOrgs(orgs)}</div>)

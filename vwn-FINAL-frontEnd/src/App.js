@@ -40,6 +40,7 @@ class App extends Component {
   }
 
   render() {
+    console.log(this.state.Data)
     const { tags, orgs } = this.state.Data
     if (this.state.status === 200) {
       return (
