@@ -6,6 +6,9 @@ import RaisedButton from 'material-ui/RaisedButton';
 import FlatButton from 'material-ui/FlatButton';
 import ArrowForwardIcon from 'material-ui/svg-icons/navigation/arrow-forward';
 import Map from './Map';
+import TagsCheckBoxes from './TagsCheckBoxes';
+import Observable from '../Observable'
+import Snackbar from 'material-ui/Snackbar';
 
 class Add extends Component {
     constructor(props) {
@@ -21,10 +24,17 @@ class Add extends Component {
                 Description: ''
             },
             submitted: false,
+            activeRegions: {},
+            activeTags: {},
+            errorText: '',
+            open: false
         }
         this.handleNext = this.handleNext.bind(this);
         this.handlePrev = this.handlePrev.bind(this);
         this.handleChange = this.handleChange.bind(this);
+        this.handleMapChange = this.handleMapChange.bind(this);
+        this.handleTagsChange = this.handleTagsChange.bind(this);
+        this.handleSecondSubmit = this.handleSecondSubmit.bind(this);
     };
 
     componentWillMount() {
@@ -34,14 +44,86 @@ class Add extends Component {
     }
 
     handleChange(event) {
-        const { formData } = this.state;
-        formData[event.target.name] = event.target.value;
-        this.setState({ formData });
+        // const { formData } = this.state;
+        // formData[event.target.name] = event.target.value;
+        // this.setState({ formData });
     }
+
+    handleNext() {
+        const { stepIndex } = this.state;
+        if (stepIndex < 2) {
+            this.setState({ stepIndex: stepIndex + 1 });
+        }
+    }
+
+    handlePrev() {
+        const { stepIndex } = this.state;
+        if (stepIndex > 0) {
+            this.setState({ stepIndex: stepIndex - 1 });
+        }
+    }
+
+    handleMapChange(event) {
+        let { activeRegions } = this.state
+        if (activeRegions[event.target.id]) {
+            activeRegions[event.target.id] = false
+        } else {
+            activeRegions[event.target.id] = true
+        }
+        console.log(activeRegions)
+    }
+
+    handleTagsChange(event) {
+        let { activeTags } = this.state
+        if (event.target.checked) {
+            activeTags[event.target.value] = true
+        } else {
+            activeTags[event.target.value] = false
+        }
+    }
+
+    handleSecondSubmit() {
+        const { activeRegions, activeTags,} = this.state
+        for (const tag in activeTags) {
+            if (activeTags[tag]) {
+                for (const region in activeRegions) {
+                    if (activeRegions[region]) {
+                        const { stepIndex } = this.state;
+                        if (stepIndex < 2) {
+                            this.setState({ stepIndex: stepIndex + 1 });
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    showSnackBar(){
+        this.setState({
+            errorText: "Please select at least 1 tag",
+            open: true,
+        })
+        this.setState({
+            errorText:"Please select at least 1 region",
+            open: true,
+        })
+    }
+
+    errorText() {
+        const { isValid } = this.state;
+        if (isValid) {
+            return null;
+        }
+        return (
+            <div>
+           </div>
+        );
+    }
+
 
     getStepContent(stepIndex) {
         const URLregex = /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/
-        const { formData } = this.state
+        const { formData, tags } = this.state
         switch (stepIndex) {
             case 0:
                 return (
@@ -50,7 +132,7 @@ class Add extends Component {
                         onSubmit={this.handleNext}
                         onError={errors => console.log(errors)}
                     >
-                        <TextValidator
+                        {/* <TextValidator
                             name="Name"
                             floatingLabelText="Name"
                             floatingLabelFixed={true}
@@ -101,7 +183,7 @@ class Add extends Component {
                             value={formData.Description}
                             validators={['required']}
                             errorMessages={['this field is required']}
-                        /><br />
+                        /><br /> */}
                         <div style={{ marginTop: 24, marginBottom: 12 }}>
                             <FlatButton
                                 label="Back"
@@ -120,11 +202,39 @@ class Add extends Component {
                 );
             case 1:
                 return (
-                    <div className="step2-container">
-                        <div className="add-map">
-                            <Map />
+                    <ValidatorForm
+                        ref="form"
+                        onSubmit={this.handleSecondSubmit}
+                        onError={this.throwErrormessage}
+                    >
+                        <div className="step2-container">
+                            <div className="add-map">
+                                <Map handle={this.handleMapChange} activeRegions={this.state.activeRegions} />
+                            </div>
+                            <Snackbar
+                    open={this.state.open}
+                    message={this.state.errorText}
+                    autoHideDuration={4000}
+                    onRequestClose={this.handleRequestClose}
+                /> 
+                            <div>
+                                <TagsCheckBoxes handle={this.handleTagsChange} tags={tags} activeTags={this.state.activeTags} />
+                            </div>
+                            <div style={{ marginTop: 24, marginBottom: 12 }}>
+                                <FlatButton
+                                    label="Back"
+                                    disabled={stepIndex === 0}
+                                    onClick={this.handlePrev}
+                                    style={{ marginRight: 12 }}
+                                />
+                                <RaisedButton
+                                    label={stepIndex === 2 ? 'Finish' : 'Next'}
+                                    primary={true}
+                                    type="submit"
+                                />
+                            </div>
                         </div>
-                    </div>
+                    </ValidatorForm>
                 );
 
             case 2:
@@ -139,19 +249,6 @@ class Add extends Component {
         }
     }
 
-    handleNext() {
-        const { stepIndex } = this.state;
-        if (stepIndex < 2) {
-            this.setState({ stepIndex: stepIndex + 1 });
-        }
-    }
-
-    handlePrev() {
-        const { stepIndex } = this.state;
-        if (stepIndex > 0) {
-            this.setState({ stepIndex: stepIndex - 1 });
-        }
-    }
 
     render() {
         const { stepIndex } = this.state;
@@ -171,7 +268,7 @@ class Add extends Component {
                     </Step>
                 </Stepper>
                 {this.getStepContent(stepIndex)}
-
+   
 
             </div>
         )

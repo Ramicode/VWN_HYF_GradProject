@@ -33,9 +33,10 @@ class Tags extends Component {
             <MenuItem key={tag}>
               <label>
                 <input
+                  defaultChecked={this.props.activeTags[tag] ? true : false}
                   type='checkbox'
                   value={tag}
-                  checked={this.props.activeTags[tag] ? true : false}
+                  // checked={this.props.activeTags[tag] ? true : false}
                   onChange={this.props.handle
                   }
                 />
