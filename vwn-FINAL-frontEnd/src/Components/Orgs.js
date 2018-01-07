@@ -12,65 +12,78 @@ class Orgs extends Component {
       orgs: {},
       orgsAfterFilter: {},
       noFilter: true,
+      filterToggle: true
     }
-    this.filterOrgsbyId = this.filterOrgsbyId.bind(this)
   }
 
   componentWillMount() {
     this.setState({
       orgs: this.props.orgs
     })
-    console.log("will mount", new Date())
     Observable.subscribe('Observable', this.activeOrgs)
   }
 
   componentDidMount() {
-    console.log("did mount", new Date());
-
     Observable.updateState('Observable', 'activeTags', Observable.getHash('t'))
   }
 
   componentWillUnmount() {
-    console.log("2nd will mount", new Date());
-
     Observable.unSubscribe('Observable', this.activeOrgs)
   }
 
   activeOrgs = (data) => {
-    console.log("get active orgs", new Date());
-    this.setState({
-      orgsAfterFilter: this.filterOrgsbyId(data)
-    })
+    if (data.activeTags && data.activeRegions) {
+      const { orgs } = this.state
+      let filterdOrgsByRegion = this.filterOrgsbyId(orgs, 'regions', data.activeRegions)
+      let filterdOrgsByTag = this.filterOrgsbyId(orgs, 'tags', data.activeTags)
+      if (Object.keys(filterdOrgsByRegion).length === 0) {
+        this.setState({
+          orgsAfterFilter: filterdOrgsByTag
+        })
+      } else if (Object.keys(filterdOrgsByTag).length === 0) {
+        this.setState({
+          orgsAfterFilter: filterdOrgsByRegion
+        })
+      } else {
+        let orgsAfterFilter = {}
+        Object.keys(filterdOrgsByRegion).forEach(rOrg => {
+          for (const tOrg in filterdOrgsByTag) {
+            if (rOrg === tOrg) {
+              orgsAfterFilter[rOrg] = Object.assign({}, orgs[rOrg])
+            }
+          }
+        })
+        this.setState({
+          orgsAfterFilter: orgsAfterFilter
+        })
+      }
+    }
   }
 
-  filterOrgsbyId = (data) => {
-    console.log("filter function", new Date())
-    let { orgs } = this.state
-    let filteredOrgs = {}
-    for (const orgID in orgs) {
-      let filteredOrg = {}
-      let org = orgs[orgID]
-      const arrayOfTags = org["tags"]
-      console.log(arrayOfTags, "where")
-      arrayOfTags.forEach(tagID => {
-        if (data.activeTags[tagID]) {
-          if (filteredOrg.name === undefined) {
-            filteredOrg = Object.assign({}, org)
-            filteredOrg.id = orgID
+
+  filterOrgsbyId = (orgs, filters, activFilters) => {
+    let filterToggle = this.state.filterToggle
+    let newFilteredOrgs = {}
+    for (const orgId in orgs) {
+      let newFilteredOrg = {}
+      let org = orgs[orgId]
+      org[`${filters}`].forEach(filterId => {
+        if (activFilters[filterId]) {
+          if (newFilteredOrg.name === undefined) {
+            newFilteredOrg = Object.assign({}, org)
+            newFilteredOrg.id = orgId
           }
         }
       })
-      if (filteredOrg.name !== undefined) {
-        filteredOrgs[orgID] = Object.assign({}, filteredOrg)
+      if (newFilteredOrg.name !== undefined) {
+        newFilteredOrgs[orgId] = Object.assign({}, newFilteredOrg)
       }
     }
-
-    return filteredOrgs
+    return newFilteredOrgs
   }
 
 
   renderOrgs(orgs) {
-    console.log("renderOrgs", new Date());
     return (
       <div className="orgs">
         {Object.keys(orgs).map(org => {
@@ -115,8 +128,8 @@ class Orgs extends Component {
   }
 
   render() {
-    const { orgs, orgsAfterFilter } = this.state
-    if (Object.keys(orgsAfterFilter).length === 0) {
+    const { orgs, orgsAfterFilter, filterToggle } = this.state
+    if (Object.keys(Observable.getHash("t")).length === 0 && Object.keys(Observable.getHash("r")).length === 0) {
       return (<div>{this.renderOrgs(orgs)}</div>)
     }
     else {
