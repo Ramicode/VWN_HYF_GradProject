@@ -11,6 +11,7 @@ import Observable from '../Observable'
 import Snackbar from 'material-ui/Snackbar';
 
 class Add extends Component {
+<<<<<<< HEAD
   constructor(props) {
     super(props);
     this.state = {
@@ -31,6 +32,38 @@ class Add extends Component {
       Phone: '',
       PostCode: '',
       HouseNumber: '',
+=======
+    constructor(props) {
+        super(props);
+        this.state = {
+            stepIndex: 0,
+            tags: {},
+            formData: {
+                Name: '',
+                Logo: '',
+                Email: '',
+                Website: '',
+                Description: ''
+            },
+            submitted: false,
+            activeRegions: {},
+            activeTags: {},
+            errorText: '',
+            open: false
+        }
+        this.handleNext = this.handleNext.bind(this);
+        this.handlePrev = this.handlePrev.bind(this);
+        this.handleChange = this.handleChange.bind(this);
+        this.handleMapChange = this.handleMapChange.bind(this);
+        this.handleTagsChange = this.handleTagsChange.bind(this);
+        this.handleSecondSubmit = this.handleSecondSubmit.bind(this); this.handleRequestClose = this.handleRequestClose.bind(this);
+    };
+
+    componentWillMount() {
+        this.setState({
+            tags: this.props.tags
+        })
+>>>>>>> 6b3c63f7568a43dff2e58726d82d298d8a0f4c76
     }
     this.handleNext = this.handleNext.bind(this);
     this.handlePrev = this.handlePrev.bind(this);
@@ -85,6 +118,7 @@ class Add extends Component {
     }
   }
 
+<<<<<<< HEAD
   handleSecondSubmit() {
     const { activeRegions, activeTags, } = this.state
     for (const tag in activeTags) {
@@ -98,9 +132,40 @@ class Add extends Component {
           }
         }
       }
+=======
+    handleSecondSubmit() {
+        const { activeRegions, activeTags, } = this.state
+        let toggle = true
+        for (const tag in activeTags) {
+            if (activeTags[tag]) {
+                for (const region in activeRegions) {
+                    if (activeRegions[region]) {
+                        const { stepIndex } = this.state;
+                        if (stepIndex < 2) {
+                            this.setState({ stepIndex: stepIndex + 1 });
+                        }
+                        toggle = false
+                    } 
+                }
+            } 
+        }
+        if (toggle) {
+            this.setState({
+                open: true,
+                errorText: "Please select at leest one tag and one region"
+            })
+        }
+    }
+
+    handleRequestClose() {
+        this.setState({
+            open: false
+        })
+>>>>>>> 6b3c63f7568a43dff2e58726d82d298d8a0f4c76
     }
   }
 
+<<<<<<< HEAD
   showSnackBar() {
     this.setState({
       errorText: "Please select at least 1 tag",
@@ -116,6 +181,28 @@ class Add extends Component {
     const { isValid } = this.state;
     if (isValid) {
       return null;
+=======
+    showSnackBar() {
+        this.setState({
+            errorText: "Please select at least 1 tag",
+            open: true,
+        })
+        this.setState({
+            errorText: "Please select at least 1 region",
+            open: true,
+        })
+    }
+
+    errorText() {
+        const { isValid } = this.state;
+        if (isValid) {
+            return null;
+        }
+        return (
+            <div>
+            </div>
+        );
+>>>>>>> 6b3c63f7568a43dff2e58726d82d298d8a0f4c76
     }
     return (
       <div>
@@ -202,6 +289,7 @@ class Add extends Component {
             </div>
           </ValidatorForm>
 
+<<<<<<< HEAD
         );
       case 1:
         return (
@@ -239,6 +327,48 @@ class Add extends Component {
             </div>
           </ValidatorForm>
         );
+=======
+                );
+            case 1:
+                return (
+                    <ValidatorForm
+                        ref="form"
+                        onSubmit={this.handleSecondSubmit}
+                        onError={this.throwErrormessage}
+                    >
+                        <div className="step2-container">
+                            <div className="add-map">
+                                <Map handle={this.handleMapChange} activeRegions={this.state.activeRegions} />
+                            </div>
+                            <div>
+                                <TagsCheckBoxes handle={this.handleTagsChange} tags={tags} activeTags={this.state.activeTags} />
+                            </div>
+                            <div style={{ marginTop: 24, marginBottom: 12 }}>
+                                <FlatButton
+                                    label="Back"
+                                    disabled={stepIndex === 0}
+                                    onClick={this.handlePrev}
+                                    style={{ marginRight: 12 }}
+                                />
+                                <RaisedButton
+                                    label={stepIndex === 2 ? 'Finish' : 'Next'}
+                                    primary={true}
+                                    type="submit"
+                                />
+                            </div>
+                            <div>
+                                <Snackbar
+                                    open={this.state.open}
+                                    message={this.state.errorText}
+                                    autoHideDuration={4000}
+                                    onRequestClose={this.handleRequestClose}
+                                />
+                            </div>
+
+                        </div>
+                    </ValidatorForm>
+                );
+>>>>>>> 6b3c63f7568a43dff2e58726d82d298d8a0f4c76
 
       case 2:
         return (
@@ -325,11 +455,20 @@ class Add extends Component {
             <StepLabel>Please Choose tags & regions</StepLabel>
           </Step>
 
+<<<<<<< HEAD
           <Step>
             <StepLabel>Please fill in your contact details:</StepLabel>
           </Step>
         </Stepper>
         {this.getStepContent(stepIndex)}
+=======
+                    <Step>
+                        <StepLabel>Please fill in your contact details:</StepLabel>
+                    </Step>
+                </Stepper>
+                {this.getStepContent(stepIndex)}
+
+>>>>>>> 6b3c63f7568a43dff2e58726d82d298d8a0f4c76
 
 
       </div>
