@@ -4,6 +4,7 @@ import Orgs from './Components/Orgs';
 import Header from './Components/Header';
 import LandingPage from './Components/LandingPage';
 import Add from './Components/Add';
+import Admin from './Components/Admin';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import Observable from './Observable';
 import Switch from 'react-router-dom/Switch';
@@ -40,7 +41,6 @@ class App extends Component {
   }
 
   render() {
-    console.log(this.state.Data)
     const { tags, orgs } = this.state.Data
     if (this.state.status === 200) {
       return (
@@ -48,6 +48,13 @@ class App extends Component {
           <Router>
             <div>
               <LandingPage data={orgs} />
+              <Route className ="route" exact path="/admin" component={() => {
+                return(
+                  <div>
+                    <Admin className="admin-page" orgs={orgs} />
+                  </div>
+                )
+              }} />
               <Route className="route" exact path="/add" component={() => {
                 return (
                   <div className="add-page">
