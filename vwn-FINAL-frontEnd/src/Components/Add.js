@@ -44,9 +44,9 @@ class Add extends Component {
   }
 
   handleChange(event) {
-    // const { formData } = this.state;
-    // formData[event.target.name] = event.target.value;
-    // this.setState({ formData });
+    const { formData } = this.state;
+    formData[event.target.name] = event.target.value;
+    this.setState({ formData });
   }
 
   handleNext() {
@@ -101,7 +101,7 @@ class Add extends Component {
     if (toggle) {
       this.setState({
         open: true,
-        errorText: "Please select at leest one tag and one region"
+        errorText: "Please select at least one Tag and one Region"
       })
     }
   }
@@ -109,17 +109,6 @@ class Add extends Component {
   handleRequestClose() {
     this.setState({
       open: false
-    })
-  }
-
-  showSnackBar() {
-    this.setState({
-      errorText: "Please select at least 1 tag",
-      open: true,
-    })
-    this.setState({
-      errorText: "Please select at least 1 region",
-      open: true,
     })
   }
 
@@ -134,7 +123,6 @@ class Add extends Component {
     );
   }
 
-
   getStepContent(stepIndex) {
     const URLregex = /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-])\/?$/
     const { formData, tags } = this.state
@@ -146,15 +134,14 @@ class Add extends Component {
             onSubmit={this.handleNext}
             onError={errors => console.log(errors)}
           >
-            {/* <TextValidator
+            <TextValidator
                             name="Name"
                             floatingLabelText="Name"
                             floatingLabelFixed={true}
-                            // value={formData.Name}
+                            value={formData.Name}
                             type="text"
                             onChange={this.handleChange}
                             value={formData.Name}
-
                             validators={['required']}
                             errorMessages={['this field is required']}
                         /><br />
@@ -197,7 +184,7 @@ class Add extends Component {
                             value={formData.Description}
                             validators={['required']}
                             errorMessages={['this field is required']}
-                        /><br /> */}
+                        /><br />
             <div style={{ marginTop: 24, marginBottom: 12 }}>
               <FlatButton
                 label="Back"
@@ -253,7 +240,6 @@ class Add extends Component {
             </div>
           </ValidatorForm>
         );
-
       case 2:
         return (
           <div>
@@ -301,7 +287,6 @@ class Add extends Component {
                         errorMessages={['this field is required', 'url is not valid']}
                       /><br />
                       <div style={{ marginTop: 24, marginBottom: 12 }}>
-
                       </div>
                     </div>
                   )
@@ -324,7 +309,6 @@ class Add extends Component {
         )
     }
   }
-
 
   render() {
     const { stepIndex } = this.state;
@@ -349,6 +333,5 @@ class Add extends Component {
       </div>
     )
   }
-
 }
 export default Add

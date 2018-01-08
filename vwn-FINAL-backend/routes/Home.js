@@ -1,6 +1,6 @@
-import  fs from 'fs';
-import  mysql from 'mysql';
-import  express from 'express';
+const fs = require('fs');
+const mysql = require('mysql');
+const express = require('express');
 
 const router = express.Router();
 const config = JSON.parse(fs.readFileSync('config-secret.json'))
