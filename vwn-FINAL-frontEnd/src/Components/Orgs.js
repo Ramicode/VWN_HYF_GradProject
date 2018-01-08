@@ -18,13 +18,14 @@ class Orgs extends Component {
 
   componentWillMount() {
     this.setState({
-      orgs: this.props.orgs
+      orgs: this.props.orgs,
     })
     Observable.subscribe('Observable', this.activeOrgs)
   }
 
   componentDidMount() {
     Observable.updateState('Observable', 'activeTags', Observable.getHash('t'))
+    Observable.updateState('Observable', 'activeRegions', Observable.getHash('r'))
   }
 
   componentWillUnmount() {
@@ -32,6 +33,7 @@ class Orgs extends Component {
   }
 
   activeOrgs = (data) => {
+
     if (data.activeTags && data.activeRegions) {
       const { orgs } = this.state
       let filterdOrgsByRegion = this.filterOrgsbyId(orgs, 'regions', data.activeRegions)
@@ -60,15 +62,13 @@ class Orgs extends Component {
     }
   }
 
-
-  filterOrgsbyId = (orgs, filters, activFilters) => {
-    let filterToggle = this.state.filterToggle
+  filterOrgsbyId = (orgs, filters, activeFilters) => {
     let newFilteredOrgs = {}
     for (const orgId in orgs) {
       let newFilteredOrg = {}
       let org = orgs[orgId]
-      org[`${filters}`].forEach(filterId => {
-        if (activFilters[filterId]) {
+      org[`${filters}`].forEach(filterId => {   
+        if (activeFilters[filterId]) {
           if (newFilteredOrg.name === undefined) {
             newFilteredOrg = Object.assign({}, org)
             newFilteredOrg.id = orgId
@@ -81,7 +81,6 @@ class Orgs extends Component {
     }
     return newFilteredOrgs
   }
-
 
   renderOrgs(orgs) {
     return (
