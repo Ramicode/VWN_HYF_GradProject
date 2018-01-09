@@ -13,8 +13,7 @@ export default class Header extends Component {
                 <div><RegionSearch /></div>
                 <div><Tags tags={this.props.tags} /></div>
             </div>
-        )
-
+        );
         return (
             <div id="AppBar">
                 <AppBar

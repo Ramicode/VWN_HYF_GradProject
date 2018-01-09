@@ -12,7 +12,6 @@ class Orgs extends Component {
       orgs: {},
       orgsAfterFilter: {},
       noFilter: true,
-      filterToggle: true
     }
   }
 
@@ -22,6 +21,8 @@ class Orgs extends Component {
     })
     Observable.subscribe('Observable', this.activeOrgs)
   }
+
+
 
   componentDidMount() {
     Observable.updateState('Observable', 'activeTags', Observable.getHash('t'))
@@ -127,7 +128,7 @@ class Orgs extends Component {
   }
 
   render() {
-    const { orgs, orgsAfterFilter, filterToggle } = this.state
+    const { orgs, orgsAfterFilter } = this.state
     if (Object.keys(Observable.getHash("t")).length === 0 && Object.keys(Observable.getHash("r")).length === 0) {
       return (<div>{this.renderOrgs(orgs)}</div>)
     }

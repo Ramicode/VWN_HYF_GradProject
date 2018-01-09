@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import regions from '../Data/Map.json';
-import Observable from '../Observable';
 
 class Map extends Component {
   constructor(props) {

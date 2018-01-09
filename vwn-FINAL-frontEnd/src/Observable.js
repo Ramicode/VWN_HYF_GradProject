@@ -1,27 +1,27 @@
 class Observable {
 
-  observables = []
+  observables = [];
 
   subscribe(observable, observer) {
-    this.observables[`${observable}`].observers.push(observer)
+    this.observables[`${observable}`].observers.push(observer);
   }
 
   unSubscribe(observable, _observer) {
-    this.observables[`${observable}`].observers = this.observables[`${observable}`].observers.filter(observer => observer !== _observer)
+    this.observables[`${observable}`].observers = this.observables[`${observable}`].observers.filter(observer => observer !== _observer);
   }
 
   newStatefullObservable(newObservable) {
     this.observables[`${newObservable}`] = {
       data: {},
-      observers: []
+      observers: [],
     }
   }
 
   updateState(observable, stateName, stateValue) {
     this.observables[`${observable}`].data[`${stateName}`] = stateValue
     this.observables[`${observable}`].observers.map(observer => {
-      observer(this.observables[`${observable}`].data)
-      return undefined
+      observer(this.observables[`${observable}`].data);
+      return undefined;
     })
   }
 
@@ -39,38 +39,38 @@ class Observable {
         }
       }
     } else {
-      let arrayOfValues = []
-      this.hashURL = []
+      let arrayOfValues = [];
+      this.hashURL = [];
       for (const value in values) {
         if (values[value]) {
           if (arrayOfValues.indexOf(URLHead + value) === -1) {
-            arrayOfValues.push(URLHead + value)
+            arrayOfValues.push(URLHead + value);
           }
           for (const id in arrayOfValues) {
             if (URLArray.indexOf(arrayOfValues[id]) === -1) {
-              URLArray.push(arrayOfValues[id])
+              URLArray.push(arrayOfValues[id]);
             }
           }
         } else {
           let toBeRemoved = URLHead + value
-          URLArray = URLArray.filter(val => val !== toBeRemoved)
+          URLArray = URLArray.filter(val => val !== toBeRemoved);
         }
       }
     }
-    window.location.hash = URLArray.join(',')
+    window.location.hash = URLArray.join(',');
   }
 
   getHash(URLHead) {
-    let resultArray = {}
-    let URLArray = window.location.hash.slice(1).split(",")
+    let resultArray = {};
+    let URLArray = window.location.hash.slice(1).split(",");
     URLArray.slice(1).map((x) => {
       if (x[0] === URLHead) {
-        x = x.substr(1)
+        x = x.substr(1);
         resultArray[x] = true
       }
-      return undefined
+      return undefined;
     })
-    return (resultArray)
+    return (resultArray);
   }
 }
 

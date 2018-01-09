@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import Map, { handleRegionChange } from './Map';
+import Map from './Map';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
 import Observable from '../Observable';

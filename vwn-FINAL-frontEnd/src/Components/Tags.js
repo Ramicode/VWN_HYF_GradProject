@@ -6,7 +6,7 @@ import AppBar from 'material-ui/AppBar';
 import TagsCheckBoxes from './TagsCheckBoxes';
 import '../CSS/Tags.css';
 
-class FilterTags extends Component {
+class Tags extends Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -14,12 +14,6 @@ class FilterTags extends Component {
       activeTags: {},
       open: false
     }
-  }
-
-  componentDidMount() {
-    this.setState({
-      tags: this.props.tags,
-    })
   }
 
   componentWillMount() {
@@ -38,7 +32,7 @@ class FilterTags extends Component {
   }
 
   render() {
-    const { tags, open } = this.state
+    const { open } = this.state
     return (
       <div className="tags">
         <FlatButton
@@ -63,4 +57,4 @@ class FilterTags extends Component {
   }
 }
 
-export default FilterTags;
+export default Tags;
