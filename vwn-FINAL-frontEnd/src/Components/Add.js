@@ -21,7 +21,9 @@ class Add extends Component {
         Logo: '',
         Email: '',
         Website: '',
-        Description: ''
+        Description: '',
+        selectedRegions: {},
+        selectedTags: {},
       },
       submitted: false,
       activeRegions: {},
@@ -29,12 +31,6 @@ class Add extends Component {
       errorText: '',
       open: false
     }
-    this.handleNext = this.handleNext.bind(this);
-    this.handlePrev = this.handlePrev.bind(this);
-    this.handleChange = this.handleChange.bind(this);
-    this.handleMapChange = this.handleMapChange.bind(this);
-    this.handleTagsChange = this.handleTagsChange.bind(this);
-    this.handleSecondSubmit = this.handleSecondSubmit.bind(this); this.handleRequestClose = this.handleRequestClose.bind(this);
   };
 
   componentWillMount() {
@@ -43,27 +39,33 @@ class Add extends Component {
     })
   }
 
-  handleChange(event) {
+  handleChange = (event) => {
     const { formData } = this.state;
     formData[event.target.name] = event.target.value;
     this.setState({ formData });
   }
 
-  handleNext() {
+  handleChangeThirdStep = (event) => {
+    const { formData } = this.state;
+    formData.selectedRegions[event.target.name] = event.target.value;
+    this.setState({ formData });
+  }
+
+  handleNext = () => {
     const { stepIndex } = this.state;
     if (stepIndex < 2) {
       this.setState({ stepIndex: stepIndex + 1 });
     }
   }
 
-  handlePrev() {
+  handlePrev = () => {
     const { stepIndex } = this.state;
     if (stepIndex > 0) {
       this.setState({ stepIndex: stepIndex - 1 });
     }
   }
 
-  handleMapChange(event) {
+  handleMapChange = (event) => {
     let { activeRegions } = this.state
     if (activeRegions[event.target.id]) {
       activeRegions[event.target.id] = false
@@ -73,7 +75,7 @@ class Add extends Component {
     console.log(activeRegions)
   }
 
-  handleTagsChange(event) {
+  handleTagsChange = (event) => {
     let { activeTags } = this.state
     if (event.target.checked) {
       activeTags[event.target.value] = true
@@ -82,13 +84,17 @@ class Add extends Component {
     }
   }
 
-  handleSecondSubmit() {
-    const { activeRegions, activeTags, } = this.state
+  handleSecondSubmit = () => {
+    const { activeRegions, activeTags, formData } = this.state
     let toggle = true
     for (const tag in activeTags) {
       if (activeTags[tag]) {
+        formData["selectedTags"] = activeTags
+        this.setState({ formData })
         for (const region in activeRegions) {
           if (activeRegions[region]) {
+            formData["selectedRegions"]["regions"] = {activeRegions}
+            this.setState({ formData })
             const { stepIndex } = this.state;
             if (stepIndex < 2) {
               this.setState({ stepIndex: stepIndex + 1 });
@@ -104,6 +110,30 @@ class Add extends Component {
         errorText: "Please select at least one Tag and one Region"
       })
     }
+  }
+
+  handleSubmit = () => {
+    const serverLink = 'http://localhost:8080/'
+    const { formData } = this.state
+    const xhr = new XMLHttpRequest();
+    xhr.open('Post', `${this.props.serverLink}add`, true);
+    xhr.setRequestHeader("Content-type", "application/json");
+    xhr.onreadystatechange = () => {
+      if (xhr.readyState === 4) {
+        if (xhr.status === 200) {
+          // showMessage('The new organization has been successfully added!', 'color_green');
+        }
+        else if (xhr.status === 500) {
+          
+          // showMessage(
+          //   `The server encountered an internal error or misconfiguration
+          //           and was unable to complete your request!`
+          // );
+        }
+      }
+    };
+    console.log(JSON.stringify(formData))
+    xhr.send(JSON.stringify(formData));
   }
 
   handleRequestClose() {
@@ -245,46 +275,48 @@ class Add extends Component {
           <div>
             <ValidatorForm
               ref="form"
-              onSubmit={this.handleNext}
+              onSubmit={this.handleSubmit}
               onError={errors => console.log(errors)}
             >
               {Object.keys(this.state.activeRegions).map((region) => {
                 if (this.state.activeRegions[region]) {
                   return (
-                    <div>
+                    <div key={region}>
                       <p>{region}</p>
-
                       <div>{this.state.activeRegions[region]}
                       </div><br />
                       <TextValidator
-                        name="Website"
+                        name={`Phone${region}`}
+                        id = {region}
                         floatingLabelText="Phone:"
                         floatingLabelFixed={true}
-                        type={Number}
-                        onChange={this.handleChange}
-                        value={formData.Phone}
-                        validators={['required', 'isNumber']}
-                        errorMessages={['this field is required', 'Please enter a valid number']}
+                        type="Text"
+                        onChange={this.handleChangeThirdStep}
+                        // value={formData.Phone}
+                        validators={['required']}
+                        errorMessages={['this field is required']}
                       /><br />
                       <TextValidator
-                        name="PostCode"
+                        name={`PostCode${region}`}
+                        id = {region}
                         floatingLabelText="Post Code:"
                         floatingLabelFixed={true}
-                        type={Text}
-                        onChange={this.handleChange}
-                        value={formData.PostCode}
+                        type="Text"
+                        onChange={this.handleChangeThirdStep}
+                        // value={formData.PostCode}
                         validators={['required',]}
                         errorMessages={['this field is required',]}
                       /><br />
                       <TextValidator
-                        name="HouseNumber"
+                        name={`HouseNumber${region}`}
+                        id = {region}
                         floatingLabelText="House Number:"
                         floatingLabelFixed={true}
-                        type={Text}
-                        onChange={this.handleChange}
-                        value={formData.HouseNumber}
+                        type="Text"
+                        onChange={this.handleChangeThirdStep}
+                        // value={formData["selectedRegion"]["region"]}
                         validators={['required',]}
-                        errorMessages={['this field is required', 'url is not valid']}
+                        errorMessages={['this field is required']}
                       /><br />
                       <div style={{ marginTop: 24, marginBottom: 12 }}>
                       </div>

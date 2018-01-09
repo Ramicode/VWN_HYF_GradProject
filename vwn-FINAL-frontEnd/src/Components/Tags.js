@@ -6,7 +6,7 @@ import AppBar from 'material-ui/AppBar';
 import TagsCheckBoxes from './TagsCheckBoxes';
 import '../CSS/Tags.css';
 
-class FilterTags extends Component {
+class Tags extends Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -63,4 +63,4 @@ class FilterTags extends Component {
   }
 }
 
-export default FilterTags;
+export default Tags;
