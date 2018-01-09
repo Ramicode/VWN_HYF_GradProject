@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import Observable from '../Observable'
-import Map from '../Components/Map'
 import MenuItem from 'material-ui/MenuItem';
 
 class Tags extends Component {

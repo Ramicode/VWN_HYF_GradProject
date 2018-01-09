@@ -7,7 +7,6 @@ import FlatButton from 'material-ui/FlatButton';
 import ArrowForwardIcon from 'material-ui/svg-icons/navigation/arrow-forward';
 import Map from './Map';
 import TagsCheckBoxes from './TagsCheckBoxes';
-import Observable from '../Observable'
 import Snackbar from 'material-ui/Snackbar';
 
 class Add extends Component {
@@ -154,7 +153,7 @@ class Add extends Component {
   }
 
   getStepContent(stepIndex) {
-    const URLregex = /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-])\/?$/
+    // const URLregex = /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-])\/?$/
     const { formData, tags } = this.state
     switch (stepIndex) {
       case 0:
@@ -171,7 +170,6 @@ class Add extends Component {
                             value={formData.Name}
                             type="text"
                             onChange={this.handleChange}
-                            value={formData.Name}
                             validators={['required']}
                             errorMessages={['this field is required']}
                         /><br />
@@ -182,7 +180,7 @@ class Add extends Component {
                             value={formData.Logo}
                             type="url"
                             onChange={this.handleChange}
-                            validators={['required',]}
+                            validators={['required', 'isURL']}
                             errorMessages={['this field is required', 'url is not valid']}
                         /><br />
                         <TextValidator
@@ -201,7 +199,7 @@ class Add extends Component {
                             type="url"
                             onChange={this.handleChange}
                             value={formData.Website}
-                            validators={['required',]}
+                            validators={['required', 'isURL']}
                             errorMessages={['this field is required', 'url is not valid']}
                         /><br />
                         <TextValidator
@@ -321,7 +319,7 @@ class Add extends Component {
                       <div style={{ marginTop: 24, marginBottom: 12 }}>
                       </div>
                     </div>
-                  )
+                  );
                 }
               })
               }
@@ -338,7 +336,7 @@ class Add extends Component {
               />
             </ValidatorForm>
           </div>
-        )
+        );
     }
   }
 
@@ -363,7 +361,7 @@ class Add extends Component {
 
 
       </div>
-    )
+    );
   }
 }
 export default Add

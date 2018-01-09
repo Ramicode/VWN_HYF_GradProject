@@ -16,12 +16,6 @@ class Tags extends Component {
     }
   }
 
-  componentDidMount() {
-    this.setState({
-      tags: this.props.tags,
-    })
-  }
-
   componentWillMount() {
     this.setState({ activeTags: Observable.getHash("t") })
   }
@@ -38,7 +32,7 @@ class Tags extends Component {
   }
 
   render() {
-    const { tags, open } = this.state
+    const { open } = this.state
     return (
       <div className="tags">
         <FlatButton

@@ -26,7 +26,8 @@ class Admin extends Component {
     super(props);
     this.state = {
       value: 'a',
-      orgs: {}
+      orgs: {},
+      open: false,
     };
   }
 
@@ -58,6 +59,7 @@ class Admin extends Component {
   };
 
   render() {
+
     const actions = [
       <FlatButton
         label="Cancel"
@@ -88,7 +90,7 @@ class Admin extends Component {
                 <h2 style={styles.headline}>Active Organizations:</h2>
                 {Object.keys(orgs).map((org) => {
                   return (
-                    <div>
+                    <div key={org}>
                       <Chip
                         onRequestDelete={this.handleRequestDelete}
                         onClick={this.handleClick}
